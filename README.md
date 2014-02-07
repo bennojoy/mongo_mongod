@@ -1,4 +1,4 @@
-mongodb_mongod
+mongo_mongod
 ========
 
 This roles helps to install and configure the mongod daemon. This role can be used to install a standalone mongod
