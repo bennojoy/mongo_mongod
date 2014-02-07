@@ -4,7 +4,7 @@ mongodb_mongod
 This roles helps to install and configure the mongod daemon. This role can be used to install a standalone mongod
 daemon or a replicated mongod set.
 
-In addition to that if combined with other roles like mongoc, mongos, mongodb_shard this can used to 
+In addition to that if combined with other roles like mongo_mongoc, mongo_mongos, mongo_shard this can used to 
 build a production grade mongodb cluster with multi replication master and shards.
   
 
@@ -37,7 +37,7 @@ mongod_replset_name: rs0                # The name of the replica set.
 ```
 - hosts: all
   roles:
-  - role: bennojoy.mongod
+  - role: bennojoy.mongo_mongod
     mongod_datadir_prefix: "/data/"
     mongod_replication: false
     mongod_port: 2701
@@ -50,7 +50,7 @@ mongod_replset_name: rs0                # The name of the replica set.
 
 - hosts: all
   roles:
-  - role: bennojoy.mongod
+  - role: bennojoy.mongo_mongod
     mongod_datadir_prefix: "/data/"
     mongod_replication: true
     mongod_port: 2701
