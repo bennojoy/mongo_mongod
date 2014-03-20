@@ -74,7 +74,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Create the file to initialize the mongod replica set
-  template: src=repset_init.j2 dest=/tmp/repset_init.js
+  template: src=repset_init.j2 dest=/tmp/repset_init.js owner={{ mongo_user }} group={{ mongo_group }}
   when: mongod_replication and mongod_repl_master == ansible_hostname
 
 - name: Pause for a while
