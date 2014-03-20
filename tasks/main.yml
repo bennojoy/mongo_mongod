@@ -62,6 +62,9 @@
 - name: Create the mongodb configuration file
   template: src=mongod.conf.j2 dest=/etc/mongod-{{ mongod_port }}.conf
 
+- name: Generate the keyfile for authentication
+  set_fact: mongod_secret_key="{{ lookup('password', 'secret length=256 chars=ascii_letters,digits') }}"
+
 - name: Copy the keyfile for authentication
   copy: src=secret dest={{ mongod_datadir_prefix }}/secret owner={{ mongo_user }} group={{ mongo_group }} mode=0400
 
