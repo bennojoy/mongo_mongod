@@ -25,6 +25,7 @@ The variables that can be passed to this role and a brief description about them
     mongod_repl_servers: []             # The hostname's of the server where the data should be replicated.
     mongod_repl_master: "localhost"     # The host which should act as the repl master during configuration.
     mongod_replset_name: rs0            # The name of the replica set.
+    mongod_no_http_interface: false     # Enable or disable the mongod HTTP interface
 
 
 Examples

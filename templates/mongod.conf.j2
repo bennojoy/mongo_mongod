@@ -15,7 +15,7 @@ fork = false
 
 logappend=true
 
-
+nohttpinterface = {{ mongod_no_http_interface }}
 port = {{ mongod_port }}
 
 dbpath={{ mongod_datadir_prefix }}/mongo-{{ mongod_port }}
