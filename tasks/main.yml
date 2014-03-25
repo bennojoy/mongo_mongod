@@ -15,8 +15,12 @@
 
 - name: Install the repository for Ubuntu mongodb
   apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" state=present
-  when: ansible_os_family == "Debian"
-  
+  when: ansible_os_family == "Debian" and ansible_distribution != "Debian"
+
+- name: Install the repository for Ubuntu mongodb
+  apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen" state=present
+  when: ansible_os_family == "Debian" and ansible_distribution == "Debian"
+
 - name: Install the libselinux module
   yum: name=libselinux-python state=installed
   when: ansible_os_family == "RedHat"
@@ -55,12 +59,16 @@
   template: src=mongod.j2 dest=/etc/init.d/mongod-{{ mongod_port }} mode=0655
   when: ansible_os_family == "RedHat"
 
+- name: Create the mongodb startup file for Ubuntu variants
+  template: src=mongod_debian_init.j2 dest=/etc/init/mongodb-{{ mongod_port }}.conf mode=0755 owner=root group=root
+  when: ansible_os_family == "Debian" and ansible_distribution != "Debian"
+
 - name: Create the mongodb startup file for Debian
-  template: src=mongod_debian_init.j2 dest=/etc/init/mongodb-{{ mongod_port }}.conf mode=0655
-  when: ansible_os_family == "Debian"
+  template: src=mongod_debian_init_sysv.j2 dest=/etc/init.d/mongod-{{ mongod_port }} mode=0655
+  when: ansible_os_family == "Debian" and ansible_distribution == "Debian"
 
 - name: Create the mongodb configuration file
-  template: src=mongod.conf.j2 dest=/etc/mongod-{{ mongod_port }}.conf
+  template: src=mongod.conf.j2 dest=/etc/mongod-{{ mongod_port }}.conf mode=0644
 
 - name: Copy the keyfile for authentication
   copy: src=secret dest={{ mongod_datadir_prefix }}/secret owner={{ mongo_user }} group={{ mongo_group }} mode=0400
@@ -71,10 +79,14 @@
 
 - name: Start the mongodb service for Ubuntu variants
   service: name=mongodb-{{ mongod_port }} state=started
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and ansible_distribution != "Debian"
+
+- name: Start the mongodb service for Debian
+  command: creates=/var/run/mongod-{{ mongod_port }}.pid /etc/init.d/mongod-{{ mongod_port }} start
+  when: ansible_os_family == "Debian" and ansible_distribution == "Debian"
 
 - name: Create the file to initialize the mongod replica set
-  template: src=repset_init.j2 dest=/tmp/repset_init.js
+  command: creates=/var/lock/subsys/mongod-{{ mongod_port }} /etc/init.d/mongod-{{ mongod_port }} start
   when: mongod_replication and mongod_repl_master == ansible_hostname
 
 - name: Pause for a while
