@@ -16,7 +16,7 @@
 - name: Install the repository for Ubuntu mongodb
   apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" state=present
   when: ansible_os_family == "Debian"
-  
+
 - name: Install the libselinux module
   yum: name=libselinux-python state=installed
   when: ansible_os_family == "RedHat"
@@ -69,6 +69,10 @@
   command: creates=/var/lock/subsys/mongod-{{ mongod_port }} /etc/init.d/mongod-{{ mongod_port }} start
   when: ansible_os_family == "RedHat"
 
+- name: Stop the default mongodb service for Ubuntu variants
+  service: name=mongodb state=stopped
+  when: ansible_os_family == "Debian"
+
 - name: Start the mongodb service for Ubuntu variants
   service: name=mongodb-{{ mongod_port }} state=started
   when: ansible_os_family == "Debian"
@@ -82,5 +86,5 @@
   when: mongod_replication
 
 - name: Initialize the replication set
-  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js 
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js
   when: mongod_replication and mongod_repl_master == ansible_hostname
