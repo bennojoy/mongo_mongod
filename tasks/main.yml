@@ -62,9 +62,6 @@
 - name: Create the mongodb configuration file
   template: src=mongod.conf.j2 dest=/etc/mongod-{{ mongod_port }}.conf
 
-- name: Copy the keyfile for authentication
-  copy: src=secret dest={{ mongod_datadir_prefix }}/secret owner={{ mongo_user }} group={{ mongo_group }} mode=0400
-
 - name: Start the mongodb service for redhat variants
   command: creates=/var/lock/subsys/mongod-{{ mongod_port }} /etc/init.d/mongod-{{ mongod_port }} start
   when: ansible_os_family == "RedHat"
