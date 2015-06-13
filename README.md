@@ -54,6 +54,31 @@ Examples
          mongod_replset_name: rs0
 
 
+MongoDB 3.X
+-----------
+
+To install modern versions of mongo on Debian based systems, use the following vars:
+
+```yaml
+# see http://docs.mongodb.org/manual/administration/install-on-linux/ for other repositories
+mongod_repo_debian: "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse"
+
+mongod_pkgs:
+  - mongodb-org
+  - python-selinux
+  - python-pymongo
+
+# defaults to mmapv1, so be explicit if you want to use WT
+mongod_storage_engine: wiredTiger
+
+# authentication is not managed by this role, so either disable it or send a
+# PR :)
+mongod_auth: false 
+
+# change this to a sane value
+mongod_bind_ip: 0.0.0.0
+```
+
 
 Dependencies
 ------------
