@@ -71,9 +71,8 @@ mongod_pkgs:
 # defaults to mmapv1, so be explicit if you want to use WT
 mongod_storage_engine: wiredTiger
 
-# authentication is not managed by this role, so either disable it or send a
-# PR :)
-mongod_auth: false 
+# the localhost exception has changed in 3.x, so either disable the key file or send a PR :)
+mongod_use_key: false 
 
 # change this to a sane value
 mongod_bind_ip: 0.0.0.0
