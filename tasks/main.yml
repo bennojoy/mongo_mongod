@@ -14,7 +14,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Install the repository for Ubuntu mongodb
-  apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" state=present
+  apt_repository: repo="{{ mongod_repo_debian }}" state=present
   when: ansible_os_family == "Debian"
   
 - name: Install the libselinux module
