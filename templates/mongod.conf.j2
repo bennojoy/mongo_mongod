@@ -1,5 +1,6 @@
 # mongo.conf
 smallfiles={{ mongod_smallfiles }}
+storageEngine={{ mongod_storage_engine }}
 
 #where to log
 {% if ansible_os_family == "RedHat" %}
@@ -33,3 +34,8 @@ pidfilepath = {{ mongod_datadir_prefix }}/mongod_{{ mongod_port }}.pid
 replSet={{ mongod_replset_name | default(mongod_port) }}
 {% endif %}
 
+bind_ip={{ mongod_bind_ip }}
+
+{% if mongod_auth is defined %}
+auth={{ mongod_auth }}
+{% endif %}
