@@ -40,12 +40,12 @@
 
 - name: Install the mongodb package
   yum: name={{ item }} state=installed
-  with_items: mongod_pkgs
+  with_items: mongod_pkgs | default(mongod_pkgs_default)
   when: ansible_os_family == "RedHat"
 
 - name: Install the mongodb package
   apt: name={{ item }} state=installed update_cache=yes
-  with_items: mongod_pkgs
+  with_items: mongod_pkgs | default(mongod_pkgs_default)
   when: ansible_os_family == "Debian"
 
 - name: create data directory for mongodb
