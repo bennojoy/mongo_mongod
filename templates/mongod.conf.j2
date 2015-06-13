@@ -20,7 +20,10 @@ logappend=true
 port = {{ mongod_port }}
 
 dbpath={{ mongod_datadir_prefix }}/mongo-{{ mongod_port }}
+
+{% if mongod_use_key %}
 keyFile={{ mongod_datadir_prefix }}/secret
+{% endif %}
 
 # location of pidfile
 pidfilepath = {{ mongod_datadir_prefix }}/mongod_{{ mongod_port }}.pid
