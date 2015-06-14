@@ -16,7 +16,7 @@
 - name: Install the repository for Ubuntu mongodb
   apt_repository: repo="{{ mongod_repo_debian }}" state=present
   when: ansible_os_family == "Debian"
-  
+
 - name: Install the libselinux module
   yum: name=libselinux-python state=installed
   when: ansible_os_family == "RedHat"
@@ -87,5 +87,44 @@
   when: mongod_replication
 
 - name: Initialize the replication set
-  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js 
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" admin /tmp/repset_init.js
+  when: mongod_replication and (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname)
+
+- name: Generate the password for authentication
+  set_fact: mongod_password="{{ lookup('password', 'mongod_password length=32 chars=ascii_letters,digits') }}"
+  when: mongod_user != false
+
+- name: Construct mongo flags for user login
+  set_fact: mongod_user_login_flags="--username {{ mongod_user }} --password {{ mongod_password }}"
+  when: mongod_user != false
+
+- name: Clear mongo flags for user login
+  set_fact: mongod_user_login_flags=""
+  when: mongod_user == false
+
+- name: Check if mongo user exists
+  shell: /usr/bin/mongo --port {{ mongod_port }} {{ mongod_user_login_flags }} --eval 'db.serverStatus()' admin
+  register: mongod_user_check
+  when: mongod_user != false and ((not mongod_replication) or (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname))
+  ignore_errors: true
+  changed_when: false
+
+- name: Create the file to create the initial user
+  template: src=create_user.j2 dest=/tmp/create_user.js
+  when: mongod_user != false and (mongod_user_check | failed) and ((not mongod_replication) or (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname))
+
+- name: Create the password file for future reference
+  shell: echo "{{ mongod_password }}" > /tmp/mongod_password
+  changed_when: false
+
+- name: Create the initial user
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" admin /tmp/create_user.js
+  when: mongod_user != false and (mongod_user_check | failed) and ((not mongod_replication) or (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname))
+
+- name: Create the file to add additional RS members
+  template: src=add_members.j2 dest=/tmp/add_members.js
+  when: mongod_user != false and (mongod_user_check | failed) and ((not mongod_replication) or (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname))
+
+- name: Add members to RS
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" {{ mongod_user_login_flags }} admin /tmp/add_members.js
   when: mongod_replication and (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname)

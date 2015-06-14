@@ -1,0 +1,6 @@
+db.createUser({
+	user: "{{ mongod_user }}",
+	pwd: "{{ mongod_password }}",
+	roles: [ 'root' ]
+});
+sleep(8000);
