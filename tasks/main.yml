@@ -16,7 +16,7 @@
 - name: Install the repository for Ubuntu mongodb
   apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" state=present
   when: ansible_os_family == "Debian"
-  
+
 - name: Install the libselinux module
   yum: name=libselinux-python state=installed
   when: ansible_os_family == "RedHat"
@@ -33,7 +33,7 @@
   user: name={{ mongo_user }} comment="MongoD"
 
 - name: make sure the hostname is available in /etc/hosts
-  lineinfile: dest=/etc/hosts regexp="{{ ansible_hostname }}" line="{{ hostvars[inventory_hostname].ansible_default_ipv4.address + " " + ansible_hostname }}" state=present
+  lineinfile: dest=/etc/hosts regexp="{{ ansible_hostname }}" line="{{ hostvars[inventory_hostname].ansible_default_ipv4.address + ' ' + ansible_hostname }}" state=present
 
 - name: Create the data directory for the mongod
   file: path={{ mongod_datadir_prefix }} owner={{ mongo_user }} group={{ mongo_group }} state=directory
@@ -85,5 +85,5 @@
   when: mongod_replication
 
 - name: Initialize the replication set
-  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js 
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js
   when: mongod_replication and (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname)
