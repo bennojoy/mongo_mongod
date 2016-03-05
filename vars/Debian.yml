@@ -1,6 +1,6 @@
 ---
 
-mongod_pkgs:
+mongod_pkgs_default:
   - python-selinux
   - mongodb-10gen
   - python-pymongo

@@ -1,5 +1,5 @@
 ---
-mongod_pkgs:
+mongod_pkgs_default:
    - mongo-10gen
    - mongo-10gen-server
    - bc

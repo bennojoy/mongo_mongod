@@ -10,3 +10,10 @@ mongod_replication: false
 mongod_repl_servers: []
 mongod_repl_master: "localhost"
 mongod_replset_name: rs0
+mongod_repo_debian: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
+mongod_storage_engine: 'mmapv1'
+mongod_bind_ip: "127.0.0.1"
+mongod_use_key: true
+mongod_user: false
+
+# mongod_auth: false
