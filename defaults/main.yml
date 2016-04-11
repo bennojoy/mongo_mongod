@@ -10,3 +10,4 @@ mongod_replication: false
 mongod_repl_servers: []
 mongod_repl_master: "localhost"
 mongod_replset_name: rs0
+mongod_no_http_interface: false
