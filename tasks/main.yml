@@ -16,7 +16,7 @@
 - name: Install the repository for Ubuntu mongodb
   apt_repository: repo="deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" state=present
   when: ansible_os_family == "Debian"
-  
+
 - name: Install the libselinux module
   yum: name=libselinux-python state=installed
   when: ansible_os_family == "RedHat"
@@ -85,5 +85,5 @@
   when: mongod_replication
 
 - name: Initialize the replication set
-  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js 
+  shell: /usr/bin/mongo --port "{{ mongod_port }}" /tmp/repset_init.js
   when: mongod_replication and (mongod_repl_master == inventory_hostname or mongod_repl_master == ansible_hostname)
